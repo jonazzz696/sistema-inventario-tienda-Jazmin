@@ -1,10 +1,17 @@
 
 import sqlite3
 import os
+import sys
 
 CARPETA_ACTUAL = os.path.dirname(os.path.abspath(__file__))
-RUTA_BASE_DATOS = os.path.join(CARPETA_ACTUAL, "tienda_jazmin.db")
 RUTA_SCHEMA = os.path.join(CARPETA_ACTUAL, "schema.sql")
+
+# En el ejecutable de PyInstaller, __file__ apunta a una carpeta temporal
+# que se borra al cerrar; la base de datos va junto al .exe para conservarse.
+if getattr(sys, "frozen", False):
+    RUTA_BASE_DATOS = os.path.join(os.path.dirname(sys.executable), "tienda_jazmin.db")
+else:
+    RUTA_BASE_DATOS = os.path.join(CARPETA_ACTUAL, "tienda_jazmin.db")
 
 
 def obtener_conexion():

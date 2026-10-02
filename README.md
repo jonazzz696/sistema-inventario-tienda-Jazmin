@@ -23,7 +23,7 @@ Además:
 
 ## Requisitos
 
-- Python 3.10 o superior (se recomienda 3.13, la versión que usa el script de acceso directo)
+- Python 3.10 o superior (probado con 3.13)
 - Windows recomendado (el acceso directo y el icono de la barra de tareas son específicos de Windows), aunque la aplicación funciona en cualquier sistema compatible con PySide6.
 
 ## Instalación
