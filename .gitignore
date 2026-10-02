@@ -1,0 +1,14 @@
+# Ignora archivos de importe de librerias
+controllers/__pycache__
+database/__pycache__
+models/__pycache__
+helpers/__pycache__
+reportes/__pycache__
+ui/__pycache__
+ui/dialogs/__pycache__
+ui/pages/__pycache__
+ui/styles/__pycache__
+ui/widgets/__pycache__
+
+# Ignora archivos de configuracion de entorno virtual
+.venv
