@@ -20,7 +20,6 @@ from PySide6.QtWidgets import (
 )
 
 from controllers import controlador_reportes
-from helpers import permisos
 from reportes.formato import (
     ETIQUETA_OPERACION, ETIQUETA_PAGO, dinero, entero, plural, variacion,
 )
@@ -260,7 +259,7 @@ class ReportesPage(Page):
         self.card_recibido.setToolTip("Ventas al contado + cobros de créditos del período")
         self.card_entradas = StatCard("Entradas (unidades)", "arrow-in", "success")
         self.card_salidas = StatCard("Salidas manuales (unidades)", "arrow-out", "info")
-        self.card_stock = StatCard("Stock bajo", "alert", "warning", clickable=permisos.puede_ver("inventario"))
+        self.card_stock = StatCard("Stock bajo", "alert", "warning", clickable=True)
         self.card_stock.clicked.connect(lambda: self.navigate("inventario"))
 
         rejilla = ResponsiveGrid([(1080, 4), (560, 2), (0, 1)])
@@ -337,9 +336,7 @@ class ReportesPage(Page):
     def _crear_creditos(self):
         card = Card("Créditos y cobros del período",
                     "Una venta a crédito cuenta como dinero recibido solo cuando el cliente paga.")
-        if permisos.puede_ver("creditos"):
-            card.add_header_widget(button("Ir a créditos", variant="ghost",
-                                          on_click=lambda: self.navigate("creditos")))
+        card.add_header_widget(button("Ir a créditos", variant="ghost", on_click=lambda: self.navigate("creditos")))
         self.texto_creditos = label("", "info", wrap=True)
         card.body.addWidget(self.texto_creditos)
         self.tabla_cobros = DataTable(

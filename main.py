@@ -11,18 +11,19 @@ los controladores y la base de datos no cambiaron.
 import sys
 
 from database.conexion import inicializar_base_datos
-from models.usuario import crear_usuarios_por_defecto
+from models.usuario import crear_admin_por_defecto
 
 
 def main():
 
     inicializar_base_datos()
 
-    for login, password in crear_usuarios_por_defecto():
+    se_creo_admin = crear_admin_por_defecto()
+    if se_creo_admin:
         print(
-            "Se creo un usuario por defecto:\n"
-            f"  Usuario: {login}\n"
-            f"  Contrasena: {password}\n"
+            "Se creo un usuario administrador por defecto:\n"
+            "  Usuario: admin\n"
+            "  Contrasena: admin123\n"
         )
 
     from ui.app import run

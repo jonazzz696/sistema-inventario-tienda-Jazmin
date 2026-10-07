@@ -5,11 +5,7 @@ Las pantallas viven en un QStackedWidget: cambiar de seccion no abre
 ventanas nuevas. Cada vez que se entra a una seccion se llama a su
 refresh(), asi los datos siempre estan actualizados.
 
-Solo se construyen las secciones que permite el rol del usuario
-(ver helpers/permisos.py): el administrador ve la parte logistica y
-el usuario de ventas ve ventas, creditos y clientes.
-
-Atajos: Ctrl+1 ... Ctrl+N para cambiar de seccion, F5 para recargar.
+Atajos: Ctrl+1 ... Ctrl+8 para cambiar de seccion, F5 para recargar.
 """
 
 import traceback
@@ -18,8 +14,7 @@ from PySide6.QtCore import Signal
 from PySide6.QtGui import QGuiApplication, QKeySequence, QShortcut
 from PySide6.QtWidgets import QHBoxLayout, QMainWindow, QStackedWidget, QVBoxLayout, QWidget
 
-from helpers import permisos, sesion
-from ui.dialogs.password_dialog import PasswordDialog
+from helpers import sesion
 from ui.pages.categorias import CategoriasPage
 from ui.pages.clientes import ClientesPage
 from ui.pages.creditos import CreditosPage
@@ -39,10 +34,10 @@ SECCIONES = [
      ("reportes", "Reportes", "chart", ReportesPage)],
     [("ventas", "Ventas", "cart", VentasPage),
      ("creditos", "Créditos", "wallet", CreditosPage),
+     ("inventario", "Inventario", "swap", InventarioPage)],
+    [("productos", "Productos", "box", ProductosPage),
+     ("categorias", "Categorías", "tag", CategoriasPage),
      ("clientes", "Clientes", "users", ClientesPage)],
-    [("inventario", "Inventario", "swap", InventarioPage),
-     ("productos", "Productos", "box", ProductosPage),
-     ("categorias", "Categorías", "tag", CategoriasPage)],
 ]
 
 
@@ -64,7 +59,6 @@ class MainWindow(QMainWindow):
 
         self.topbar = TopBar(sesion.obtener_usuario_actual())
         self.topbar.logout_requested.connect(self._cerrar_sesion)
-        self.topbar.change_password_requested.connect(self._cambiar_password)
         vertical.addWidget(self.topbar)
 
         cuerpo = QHBoxLayout()
@@ -72,11 +66,7 @@ class MainWindow(QMainWindow):
         cuerpo.setSpacing(0)
         vertical.addLayout(cuerpo, 1)
 
-        permitidas = permisos.secciones_permitidas()
-        secciones = [[s for s in grupo if s[0] in permitidas] for grupo in SECCIONES]
-        secciones = [grupo for grupo in secciones if grupo]
-
-        grupos_menu = [[(clave, texto, ico) for clave, texto, ico, _ in grupo] for grupo in secciones]
+        grupos_menu = [[(clave, texto, ico) for clave, texto, ico, _ in grupo] for grupo in SECCIONES]
         self.sidebar = Sidebar(grupos_menu)
         self.sidebar.page_selected.connect(self.navigate)
         cuerpo.addWidget(self.sidebar)
@@ -86,7 +76,7 @@ class MainWindow(QMainWindow):
 
         self.pages = {}
         numero = 1
-        for grupo in secciones:
+        for grupo in SECCIONES:
             for clave, texto, _ico, clase in grupo:
                 pagina = clase(self.navigate)
                 self.pages[clave] = pagina
@@ -100,8 +90,7 @@ class MainWindow(QMainWindow):
 
         self.toast = Toast(raiz)
         self._clave_actual = None
-        if secciones:
-            self.navigate(secciones[0][0][0])
+        self.navigate("inicio")
         self._ajustar_tamano()
 
     # --- Navegacion ---
@@ -143,13 +132,6 @@ class MainWindow(QMainWindow):
             self.toast.reposition()
 
     # --- Sesion / ventana ---
-
-    def _cambiar_password(self):
-        if not permisos.es_admin():
-            return
-        dialogo = PasswordDialog(self)
-        if dialogo.exec():
-            self.show_toast(dialogo.mensaje_exito)
 
     def _cerrar_sesion(self):
         if messages.confirm(self, "¿Cerrar sesión?",

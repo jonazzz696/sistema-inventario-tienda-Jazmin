@@ -1,4 +1,4 @@
-"""Barra superior: marca, fecha, usuario, cambiar contrasena (admin) y cerrar sesion."""
+"""Barra superior: marca, fecha, usuario y cerrar sesion."""
 
 from datetime import date
 
@@ -7,8 +7,6 @@ from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
 
 from ui.icons import logo_pixmap
 from ui.widgets.common import button, label
-
-_NOMBRE_ROL = {"admin": "Administrador", "vendedor": "Ventas"}
 
 _DIAS = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"]
 _MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio",
@@ -22,7 +20,6 @@ def fecha_larga(d=None):
 
 class TopBar(QFrame):
     logout_requested = Signal()
-    change_password_requested = Signal()
 
     def __init__(self, usuario, parent=None):
         super().__init__(parent)
@@ -59,16 +56,12 @@ class TopBar(QFrame):
         textos.setSpacing(0)
         etiqueta_nombre = QLabel(nombre)
         etiqueta_nombre.setObjectName("UserName")
-        etiqueta_rol = QLabel(_NOMBRE_ROL.get(rol, rol.capitalize()))
+        etiqueta_rol = QLabel(rol.capitalize())
         etiqueta_rol.setObjectName("UserRole")
         textos.addWidget(etiqueta_nombre)
         textos.addWidget(etiqueta_rol)
         fila.addLayout(textos)
         fila.addSpacing(10)
-
-        if rol == "admin":
-            fila.addWidget(button("Cambiar contraseña", "lock", variant="ghost",
-                                  on_click=lambda: self.change_password_requested.emit()))
 
         salir = button("Cerrar sesión", "logout", variant="ghost",
                        on_click=lambda: self.logout_requested.emit())

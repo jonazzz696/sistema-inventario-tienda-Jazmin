@@ -3,11 +3,10 @@ Pantalla de Inicio.
 
 Todos los numeros salen de la base de datos a traves de
 controllers/controlador_dashboard.py. Las tarjetas son clicables y
-llevan a la seccion correspondiente (si el rol puede verla).
+llevan a la seccion correspondiente.
 """
 
 from controllers import controlador_dashboard
-from helpers import permisos
 from helpers.formato import centavos_a_texto
 from ui.formato_ui import etiqueta_pago, fecha_corta, plural
 from ui.widgets.common import Card, button
@@ -22,22 +21,16 @@ class DashboardPage(Page):
         super().__init__("Inicio", "Resumen de la tienda al día de hoy.")
         self.navigate = navigate
 
-        # Los accesos a secciones que el rol no puede ver no se muestran.
-        puede = permisos.puede_ver
-        self._puede_ventas = puede("ventas")
-
-        if puede("productos"):
-            self.add_action(button("Nuevo producto", "plus", "secondary" if self._puede_ventas else "primary",
-                                   on_click=lambda: navigate("productos", "nuevo")))
-        if self._puede_ventas:
-            self.add_action(button("Nueva venta", "cart", "primary",
-                                   on_click=lambda: navigate("ventas")))
+        self.add_action(button("Nuevo producto", "plus", "secondary",
+                               on_click=lambda: navigate("productos", "nuevo")))
+        self.add_action(button("Nueva venta", "cart", "primary",
+                               on_click=lambda: navigate("ventas")))
 
         # --- Indicadores ---
-        self.card_productos = StatCard("Productos activos", "box", "primary", clickable=puede("productos"))
-        self.card_stock = StatCard("Stock bajo", "alert", "warning", clickable=puede("inventario"))
-        self.card_ventas = StatCard("Ventas de hoy", "cart", "success", clickable=self._puede_ventas)
-        self.card_credito = StatCard("Crédito pendiente", "wallet", "info", clickable=puede("creditos"))
+        self.card_productos = StatCard("Productos activos", "box", "primary", clickable=True)
+        self.card_stock = StatCard("Stock bajo", "alert", "warning", clickable=True)
+        self.card_ventas = StatCard("Ventas de hoy", "cart", "success", clickable=True)
+        self.card_credito = StatCard("Crédito pendiente", "wallet", "info", clickable=True)
         self.card_productos.clicked.connect(lambda: navigate("productos"))
         self.card_stock.clicked.connect(lambda: navigate("inventario"))
         self.card_ventas.clicked.connect(lambda: navigate("ventas"))
@@ -51,9 +44,8 @@ class DashboardPage(Page):
         # --- Paneles ---
         panel_stock = Card("Productos por reponer",
                            "Existencia igual o menor a su stock mínimo.")
-        if puede("inventario"):
-            panel_stock.add_header_widget(button("Ir a inventario", variant="ghost",
-                                                 on_click=lambda: navigate("inventario")))
+        panel_stock.add_header_widget(button("Ir a inventario", variant="ghost",
+                                             on_click=lambda: navigate("inventario")))
         self.tabla_stock = DataTable(
             [
                 Column("nombre", "Producto", stretch=True),
@@ -67,9 +59,8 @@ class DashboardPage(Page):
         panel_stock.body.addWidget(self.tabla_stock)
 
         panel_ventas = Card("Últimas ventas", "Las más recientes primero.")
-        if self._puede_ventas:
-            panel_ventas.add_header_widget(button("Ir a ventas", variant="ghost",
-                                                  on_click=lambda: navigate("ventas")))
+        panel_ventas.add_header_widget(button("Ir a ventas", variant="ghost",
+                                              on_click=lambda: navigate("ventas")))
         self.tabla_ventas = DataTable(
             [
                 Column("numero_venta", "No. venta", width=110),
@@ -79,8 +70,7 @@ class DashboardPage(Page):
                                         "info" if f["tipo_pago"] == "credito" else "neutral")),
                 Column("total", "Total", fmt=centavos_a_texto, align="right", stretch=True),
             ],
-            empty_text="Todavía no hay ventas registradas. Usa \"Nueva venta\" para registrar la primera."
-                       if self._puede_ventas else "Todavía no hay ventas registradas.",
+            empty_text="Todavía no hay ventas registradas. Usa \"Nueva venta\" para registrar la primera.",
             min_height=300,
         )
         panel_ventas.body.addWidget(self.tabla_ventas)
@@ -116,8 +106,8 @@ class DashboardPage(Page):
             f"Al contado: {centavos_a_texto(ventas['contado'])}\n"
             f"Créditos cobrados hoy: {centavos_a_texto(ventas['cobros'])}\n"
             f"Vendido al crédito hoy: {centavos_a_texto(ventas['credito'])}\n"
-            f"Falta cobrar de esas ventas: {centavos_a_texto(ventas['credito_pendiente'])}"
-            + ("\nClic para abrir Ventas" if self._puede_ventas else ""))
+            f"Falta cobrar de esas ventas: {centavos_a_texto(ventas['credito_pendiente'])}\n"
+            "Clic para abrir Ventas")
 
         credito = datos["credito"]
         self.card_credito.set_value(
