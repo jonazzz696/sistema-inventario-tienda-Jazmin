@@ -25,7 +25,7 @@ from ui.widgets.page import Page
 from ui.widgets.responsive import ResponsiveGrid
 from ui.widgets.stat_card import StatCard
 
-_ORDEN_ESTADO = {"pendiente": 0, "parcial": 1, "pagado": 2}
+_ORDEN_ESTADO = {"pendiente": 0, "parcial": 1, "pagados": 2}
 
 
 class CreditosPage(Page):
