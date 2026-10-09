@@ -129,4 +129,4 @@ python -m database.conexion
 
 ## Documentación adicional
 
-[CAMBIOS_INTERFAZ.md](CAMBIOS_INTERFAZ.md) describe con más detalle la migración de Tkinter a PySide6, el módulo de reportes (de dónde sale cada dato) y el funcionamiento de los créditos.
+[CAMBIOS_INTERFAZ.md](CAMBIOS_INTERFAZ.md) describe con más detalle la migración de Tkinter a PySide6, el módulo de reportes (de dónde sale cada dato) y el funcionamiento de los créditos. Entre otros.
