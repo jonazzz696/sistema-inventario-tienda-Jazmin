@@ -17,7 +17,15 @@ Aplicación de escritorio para administrar el inventario, las ventas, los crédi
 
 Además:
 
-- Inicio de sesión con contraseñas cifradas (PBKDF2-SHA256) y roles `admin` / `vendedor`.
+- Inicio de sesión con contraseñas cifradas (PBKDF2-SHA256) y dos cuentas con funciones separadas:
+
+  | Cuenta | Rol | Secciones |
+  |---|---|---|
+  | Administrador | `admin` | Inicio, Reportes, Inventario, Productos y Categorías (parte logística) |
+  | Ventas | `vendedor` | Ventas, Créditos y Clientes |
+
+  Cada cuenta solo ve en el menú las secciones de su rol (ver `helpers/permisos.py`).
+- El administrador puede cambiar su contraseña y la de la cuenta de ventas desde el botón **Cambiar contraseña** de la barra superior (pide la contraseña actual del administrador).
 - Búsqueda en todas las tablas sin importar mayúsculas ni tildes.
 - Las consultas pesadas y la generación de PDF se ejecutan en segundo plano para no congelar la interfaz.
 
@@ -52,13 +60,14 @@ python main.py
 Al abrir el sistema por primera vez:
 
 1. Se crea la base de datos `database/tienda_jazmin.db` a partir de `database/schema.sql` (y se aplican las migraciones pendientes).
-2. Si no existe ningún usuario, se crea un administrador por defecto:
+2. Si falta alguna de las dos cuentas, se crea con estos datos por defecto:
 
    | Usuario | Contraseña |
    |---|---|
    | `admin` | `admin123` |
+   | `ventas` | `ventas123` |
 
-   **Cambia esta contraseña antes de usar el sistema en producción.**
+   **Cambia ambas contraseñas (sesión de administrador → Cambiar contraseña) antes de usar el sistema en producción.**
 
 ### Acceso directo en el escritorio (Windows)
 
@@ -74,7 +83,7 @@ Se crea el acceso **Tienda Jazmín** en el escritorio, que abre el programa sin 
 
 | Atajo | Acción |
 |---|---|
-| `Ctrl+1` … `Ctrl+8` | Cambiar de sección (en el orden del menú lateral) |
+| `Ctrl+1`, `Ctrl+2`… | Cambiar de sección (en el orden del menú lateral) |
 | `F5` | Recargar los datos de la pantalla actual |
 | `Ctrl+Enter` | Guardar en los formularios |
 | Doble clic en una fila | Editar el registro o abrir su detalle |
